@@ -8,7 +8,6 @@
 </head>
 <body>
     <form method="post">
-    <textarea name="input" id="input" id="" cols="30" rows="10"></textarea>
     <input type="submit" id="submit" />
     </form>
     <pre id="result"></pre>
