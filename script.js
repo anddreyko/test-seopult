@@ -32,6 +32,7 @@ $(document).ready(function(){
                     .val(textButtonSubmit);
                 } else {
                     console.log('false');
+                    $('#result').text('Error on server');
                     $('#submit').attr('disabled', false)
                     .val(textButtonSubmit);
                 }
@@ -39,6 +40,7 @@ $(document).ready(function(){
             error: function(e){
                 console.log(e.responseText);
                 console.log(e);
+                $('#result').text(e.responseText);
                 $('#submit').attr('disabled', false)
                 .val(textButtonSubmit);
             }
