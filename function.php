@@ -9,7 +9,7 @@
         $f = Preparing($f);
         $result['top20RuChar'] = ResultArray(Analysis(
             $f,
-            //only 2-dimensional array for result
+            //only 2 sub-array array for result
             array(
                 'symbol' => array(),
                 'count' => array()
