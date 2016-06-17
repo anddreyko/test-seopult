@@ -20,7 +20,7 @@ $(document).ready(function(){
             success: function(d){
                 if( d.status ) {
                     $('#result').html(
-                        "<pre>\n"
+                        '<pre>'
                       + d.top20Word+"\n"
                       + 'Time Execution Analysis: '+d.timeExecAnalysis20Word+"sec\n"
                       + 'Time Execution Query: '+d.timeExecQuery20Word+"sec\n"
@@ -34,23 +34,19 @@ $(document).ready(function(){
                       + '</pre>'
                     );
                     console.log('true');
-                    $('#submit').attr('disabled', false)
-                    .val(textButtonSubmit);
                 } else {
                     console.log('false');
-                    $('#result').html('Error on server');
-                    $('#submit').attr('disabled', false)
-                    .val(textButtonSubmit);
+                    $('#result').html('Error on server: '+d.res);
                 }
             },
             error: function(e){
                 console.log(e.responseText);
                 console.log(e);
                 $('#result').text(e.responseText);
-                $('#submit').attr('disabled', false)
-                .val(textButtonSubmit);
             },
             complete: function(){
+                $('#submit').attr('disabled', false)
+                .val(textButtonSubmit);
                 $('#result').removeClass('loading');
             }
         });
