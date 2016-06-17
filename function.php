@@ -6,8 +6,6 @@
     $result = array();
     
     if( $f ){
-        //for output time execution query
-        $timeExec;
         $f = Preparing($f);
         $result['top20RuChar'] = ResultArray(Analysis(
             $f,
@@ -22,7 +20,7 @@
         $result['timeExec20RuChar'] = $timeExec;
         $result['top20Word'] = ResultArray(Analysis(
             $f,
-            //only 2-dimensional array for result
+            //only 2 sub-array for result
             array(
                 'word' => array(),
                 'count' => array()
@@ -51,8 +49,9 @@
         return $e;
     }
     function Analysis($e, $result, $regexp) {
+        //for output time execution query
         global $timeExec;
-        $start = mktime();
+        $timeExec = mktime();
         //$i for calculate to rate
         $i=0;
         //get names of keys result array
@@ -80,7 +79,7 @@
             ) break;
         }
         array_multisort($result[$keysname[1]], SORT_NUMERIC, SORT_DESC, $result[$keysname[0]]);
-        $timeExec = mktime() - $start;
+        $timeExec = mktime() - $timeExec;
         return array(
             $keysname[0] => array_slice($result[$keysname[0]], 0, 20),
             $keysname[1] => array_slice($result[$keysname[1]], 0, 20)
