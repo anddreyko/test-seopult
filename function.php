@@ -2,13 +2,15 @@
     setlocale(LC_ALL, 'ru_RU.UTF-8');
     ini_set('memory_limit', '-1');
     ini_set('max_execution_time', '120');
-    $f = iconv('Windows-1251', 'UTF-8', file_get_contents('http://seopult.ru/uploads/File/war_and_peace.txt'));
+    $file = iconv('Windows-1251', 'UTF-8', file_get_contents('http://seopult.ru/uploads/File/war_and_peace.txt'));
     $result = array();
     
-    if( $f ){
-        $f = Preparing($f);
+    if( $file ){
+        $timeExecTotal = time();
+        $file = Preparing($file);
+        $timeExecQuery = time();
         $result['top20RuChar'] = ResultArray(Analysis(
-            $f,
+            $file,
             //only 2 sub-array for result
             array(
                 'symbol' => array(),
@@ -19,9 +21,12 @@
             //count of seats
             20
         ));
-        $result['timeExec20RuChar'] = $timeExec;
+        $result['timeExecAnalysis20RuChar'] = $timeExecAnalysis;
+        $result['timeExecQuery20RuChar'] = time() - $timeExecQuery;
+        $result['timeExecBuildTable20RuChar'] = $timeExecBuildTable;
+        $timeExecQuery = time();
         $result['top20Word'] = ResultArray(Analysis(
-            $f,
+            $file,
             //only 2 sub-array for result
             array(
                 'word' => array(),
@@ -32,7 +37,10 @@
             //count of seats
             20
         ));
-        $result['timeExec20Word'] = $timeExec;
+        $result['timeExecAnalysis20Word'] = $timeExecAnalysis;
+        $result['timeExecQuery20Word'] = time() - $timeExecQuery;
+        $result['timeExecBuildTable20Word'] = $timeExecBuildTable;
+        $result['timeExecTotal'] = time() - $timeExecTotal;
         $result['status'] = true;
     } else {
         $result['res'] = 'Read Error';
@@ -54,8 +62,8 @@
     }
     function Analysis($e = '', $result = array(), $regexp = '//', $top = 20) {
         //for output time execution query
-        global $timeExec;
-        $timeExec = mktime();
+        global $timeExecAnalysis;
+        $timeExecAnalysis = time();
         //$i for calculate to rate
         $i=0;
         //get names of keys result array
@@ -83,13 +91,16 @@
             ) break;
         }
         array_multisort($result[$keysname[1]], SORT_NUMERIC, SORT_DESC, $result[$keysname[0]]);
-        $timeExec = mktime() - $timeExec;
+        $timeExecAnalysis = time() - $timeExecAnalysis;
         return array(
             $keysname[0] => array_slice($result[$keysname[0]], 0, $top),
             $keysname[1] => array_slice($result[$keysname[1]], 0, $top)
         );
     }
     function ResultArray($e = array()) {
+        //for output time execution query
+        global $timeExecBuildTable;
+        $timeExecBuildTable = time();
         $result = '';
         $border = '';
         $widthCols = array();
@@ -126,6 +137,7 @@
             }
             $result .= '|'."\n".$border;
         }
+        $timeExecBuildTable = time() - $timeExecBuildTable;
         return $result;
     }
 ?>

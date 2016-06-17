@@ -5,3 +5,7 @@ input{
 form{
     text-align: center;
 }
+.loading{
+    background: url('load.gif') no-repeat 50% 50%;
+    height: 141px;
+}
