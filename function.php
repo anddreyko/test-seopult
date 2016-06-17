@@ -15,7 +15,9 @@
                 'count' => array()
             ),
             //regular expression for find cyrilic char
-            '/[а-яА-Я]/u'
+            '/[а-яА-Я]/u',
+            //count of seats
+            20
         ));
         $result['timeExec20RuChar'] = $timeExec;
         $result['top20Word'] = ResultArray(Analysis(
@@ -26,7 +28,9 @@
                 'count' => array()
             ),
             //regular expression for find words
-            '/\b\S{2,}\b/u'
+            '/\b\S{2,}\b/u',
+            //count of seats
+            20
         ));
         $result['timeExec20Word'] = $timeExec;
         $result['status'] = true;
@@ -38,7 +42,7 @@
     echo json_encode($result);
     die();
     
-    function Preparing($e){
+    function Preparing($e = ''){
         //remove unnecessary spaces
         $e = trim(preg_replace('/[\s]+/is', ' ', $e));
         //remove footnote and mark first footnote
@@ -48,7 +52,7 @@
         $e = preg_replace('/\W*(?<=[a-zA-Z])\W*\d+/u', '', $e);
         return $e;
     }
-    function Analysis($e, $result, $regexp) {
+    function Analysis($e = '', $result = array(), $regexp = '//', $top = 20) {
         //for output time execution query
         global $timeExec;
         $timeExec = mktime();
@@ -74,18 +78,18 @@
             } else $result[$keysname[1]][$i]++;
             //for early completion of the cycle when the remainder is too small
             if(
-                isset($result[$keysname[1]][20])
-             && ($arrLength-$k) < $result[$keysname[1]][20]  
+                isset($result[$keysname[1]][$top])
+             && ($arrLength-$k) < $result[$keysname[1]][$top]  
             ) break;
         }
         array_multisort($result[$keysname[1]], SORT_NUMERIC, SORT_DESC, $result[$keysname[0]]);
         $timeExec = mktime() - $timeExec;
         return array(
-            $keysname[0] => array_slice($result[$keysname[0]], 0, 20),
-            $keysname[1] => array_slice($result[$keysname[1]], 0, 20)
+            $keysname[0] => array_slice($result[$keysname[0]], 0, $top),
+            $keysname[1] => array_slice($result[$keysname[1]], 0, $top)
         );
     }
-    function ResultArray($e) {
+    function ResultArray($e = array()) {
         $result = '';
         $border = '';
         $widthCols = array();
