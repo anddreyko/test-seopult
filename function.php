@@ -89,6 +89,7 @@
         $result = '';
         $border = '';
         $widthCols = array();
+        //calculate width cols
         foreach($e as $k => $c){
             $widthCols[$k] = mb_strlen($k);
             foreach($c as $el){
@@ -97,7 +98,7 @@
                     $widthCols[$k] = $currentWidthCols;
             }
         }
-        
+        //build top horizontal border
         foreach($e as $k => $c){
             $border .= '+';
             for($i=0; $i<$widthCols[$k]+2; $i++)
@@ -105,12 +106,14 @@
         }
         $border .= '+'."\n";
         $result .= $border;
+        //build header table
         foreach($e as $k => $c){
             $result .= '| '.$k;
             for($i=0; $i < $widthCols[$k]-mb_strlen($k)+1; $i++)
                 $result .= ' ';
         }
         $result .= '|'."\n".$border;
+        //build body table
         for( $i = 0; $i < count($e, COUNT_RECURSIVE) / count($e)-1; $i++ ){
             foreach($e as $k => $el){
                 $result .= '| '.$el[$i];
