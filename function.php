@@ -9,7 +9,7 @@
         $f = Preparing($f);
         $result['top20RuChar'] = ResultArray(Analysis(
             $f,
-            //only 2 sub-array array for result
+            //only 2 sub-array for result
             array(
                 'symbol' => array(),
                 'count' => array()
@@ -26,7 +26,7 @@
                 'count' => array()
             ),
             //regular expression for find words
-            '/\b\S+\b/u'
+            '/\b\S{2,}\b/u'
         ));
         $result['timeExec20Word'] = $timeExec;
         $result['status'] = true;
@@ -44,7 +44,7 @@
         //remove footnote and mark first footnote
         $e = preg_replace('/ 1 \(См. сноски в конце части\)|СНОСКИ.*?(?=ЧАСТЬ)/u', '', $e);
         $e = preg_replace('/СНОСКИ.*/u', '', $e);
-        //remove mark footnote to phrases in a foreign language
+        //remove mark footnote to phrases in foreign language
         $e = preg_replace('/\W*(?<=[a-zA-Z])\W*\d+/u', '', $e);
         return $e;
     }
@@ -98,7 +98,7 @@
                     $widthCols[$k] = $currentWidthCols;
             }
         }
-        //build top horizontal border
+        //build horizontal border
         foreach($e as $k => $c){
             $border .= '+';
             for($i=0; $i<$widthCols[$k]+2; $i++)
@@ -106,14 +106,14 @@
         }
         $border .= '+'."\n";
         $result .= $border;
-        //build header table
+        //build tables header
         foreach($e as $k => $c){
             $result .= '| '.$k;
             for($i=0; $i < $widthCols[$k]-mb_strlen($k)+1; $i++)
                 $result .= ' ';
         }
         $result .= '|'."\n".$border;
-        //build body table
+        //build tables body
         for( $i = 0; $i < count($e, COUNT_RECURSIVE) / count($e)-1; $i++ ){
             foreach($e as $k => $el){
                 $result .= '| '.$el[$i];
