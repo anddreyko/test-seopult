@@ -14,7 +14,7 @@
                 'symbol' => array(),
                 'count' => array()
             ),
-            //regular expression for find words
+            //regular expression for find cyrilic char
             '/[а-яА-Я]/u'
         ));
         $result['timeExec20RuChar'] = $timeExec;
