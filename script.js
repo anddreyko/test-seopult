@@ -1,7 +1,7 @@
 $(document).ready(function(){
-	$('form').submit(function(e){
-		e.preventDefault();
-		e.stopPropagation();
+    $('form').submit(function(e){
+        e.preventDefault();
+        e.stopPropagation();
         send();
     });
     function send(){
