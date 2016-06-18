@@ -2,13 +2,14 @@
     mb_internal_encoding('UTF-8');
     setlocale(LC_ALL, 'ru_RU.UTF-8');
     ini_set('memory_limit', '-1');
-    ini_set('max_execution_time', '120');
+    ini_set('max_execution_time', '120'); //on the off-chance
     $file = iconv('Windows-1251', 'UTF-8', file_get_contents('http://seopult.ru/uploads/File/war_and_peace.txt'));
     $result = array();
     
     if( $file ){
         $timeExecTotal = time();
         $file = Preparing($file);
+        $result['timeExecPreparing'] = $timeExecPreparing;
         $timeExecQuery = time();
         $result['top20RuChar'] = ResultArray(Analysis(
             $file,
@@ -38,6 +39,8 @@
     die();
     
     function Preparing($e = ''){
+        global $timeExecPreparing;
+        $timeExecPreparing = time();
         //remove unnecessary spaces
         $e = trim(preg_replace('/[\s]+/is', ' ', $e));
         //remove footnote and mark first footnote
@@ -45,6 +48,7 @@
         $e = preg_replace('/СНОСКИ.*/u', '', $e);
         //remove mark footnote to phrases in foreign language
         $e = preg_replace('/\W*(?<=[a-zA-Z])\W*\d+/u', '', $e);
+        $timeExecPreparing = time() - $timeExecPreparing;
         return $e;
     }
     

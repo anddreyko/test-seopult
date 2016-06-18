@@ -20,15 +20,18 @@ $(document).ready(function(){
                 if( d.status ) {
                     $('#result').html(
                         '<pre>'
+                      + 'Top 20 Words'+"\n"
                       + d.top20Word+"\n"
                       + 'Time Execution Analysis: '+d.timeExecAnalysis20Word+"sec\n"
                       + 'Time Execution Query: '+d.timeExecQuery20Word+"sec\n"
                       + 'Time Execution Build Table: '+d.timeExecBuildTable20Word+"sec\n\n"
+                      + 'Top 20 Cyrillic Chars'+"\n"
                       + d.top20RuChar+"\n"
                       + 'Time Execution Analysis: '+d.timeExecAnalysis20RuChar+"sec\n"
                       + 'Time Execution Query: '+d.timeExecQuery20RuChar+"sec\n"
                       + 'Time Execution Build Table: '+d.timeExecBuildTable20RuChar+"sec\n\n"
                       + '============================'+"\n\n"
+                      + 'Time Execution Preparing: '+d.timeExecPreparing+"sec\n"
                       + 'Time Execution TOTAL: '+d.timeExecTotal+'sec'
                       + '</pre>'
                     );
