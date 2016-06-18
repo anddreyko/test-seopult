@@ -7,6 +7,9 @@
     $result = array();
     
     if( $file ){
+        $timeExecPreparing = '';
+        $timeExecAnalysis = '';
+        $timeExecBuildTable = '';
         $timeExecTotal = time();
         $file = Preparing($file);
         $result['timeExecPreparing'] = $timeExecPreparing;
@@ -75,7 +78,7 @@
     }
     
     //$e - input array, $cols is name for header table result
-    function ResultArray($e = array(), $cols = array()) {
+    function ResultArray($e = array(), $cols = array('col #1', 'col #2')) {
         global $timeExecBuildTable;
         $timeExecBuildTable = time();
         $result = '';
