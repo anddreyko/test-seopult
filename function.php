@@ -1,4 +1,5 @@
 <?php
+    mb_internal_encoding('UTF-8');
     setlocale(LC_ALL, 'ru_RU.UTF-8');
     ini_set('memory_limit', '-1');
     ini_set('max_execution_time', '120');
@@ -11,34 +12,28 @@
         $timeExecQuery = time();
         $result['top20RuChar'] = ResultArray(Analysis(
             $file,
-            //only 2 sub-array for result
-            array(
-                'symbol' => array(),
-                'count' => array()
-            ),
             //regular expression for find cyrilic char
-            '/[а-яА-Я]/u',
+            '/[а-я]/ui',
             //count of seats
             20
-        ));
-        $result['timeExecAnalysis20RuChar'] = $timeExecAnalysis;
+        ),
+        //cols for result
+        array('word', 'count'));
         $result['timeExecQuery20RuChar'] = time() - $timeExecQuery;
+        $result['timeExecAnalysis20RuChar'] = $timeExecAnalysis;
         $result['timeExecBuildTable20RuChar'] = $timeExecBuildTable;
         $timeExecQuery = time();
         $result['top20Word'] = ResultArray(Analysis(
             $file,
-            //only 2 sub-array for result
-            array(
-                'word' => array(),
-                'count' => array()
-            ),
             //regular expression for find words
             '/\b\S{2,}\b/u',
             //count of seats
             20
-        ));
-        $result['timeExecAnalysis20Word'] = $timeExecAnalysis;
+        ),
+        //cols for result
+        array('word', 'count'));
         $result['timeExecQuery20Word'] = time() - $timeExecQuery;
+        $result['timeExecAnalysis20Word'] = $timeExecAnalysis;
         $result['timeExecBuildTable20Word'] = $timeExecBuildTable;
         $result['timeExecTotal'] = time() - $timeExecTotal;
         $result['status'] = true;
@@ -60,83 +55,65 @@
         $e = preg_replace('/\W*(?<=[a-zA-Z])\W*\d+/u', '', $e);
         return $e;
     }
-    function Analysis($e = '', $result = array(), $regexp = '//', $top = 20) {
+    function Analysis($e = '', $regexp = '//', $top = 20) {
         //for output time execution query
         global $timeExecAnalysis;
         $timeExecAnalysis = time();
-        //$i for calculate to rate
-        $i=0;
-        //get names of keys result array
-        $keysname = array_keys($result);
         //run find regular expression for condition of the problem
         preg_match_all($regexp, $e, $arr);
-        //sorting by ABC for optimized search
-        natcasesort($arr[0]);
-        //set first element for result
-        array_push($result[$keysname[0]], array_shift($arr[0]));
-        array_push($result[$keysname[1]], 1);
+        //convert all elements array to lower case for caseless to processing
         //calculate count for result
-        $arrLength = count($arr[0]);
-        foreach($arr[0] as $k => $e) {
-            $e = mb_strtolower($e);
-            if( $e != $result[$keysname[0]][$i] ){
-                array_push($result[$keysname[0]], $e);
-                array_push($result[$keysname[1]], 1);
-                $i++;
-            } else $result[$keysname[1]][$i]++;
-            //for early completion of the cycle when the remainder is too small
-            if(
-                isset($result[$keysname[1]][$top])
-             && ($arrLength-$k) < $result[$keysname[1]][$top]  
-            ) break;
-        }
-        array_multisort($result[$keysname[1]], SORT_NUMERIC, SORT_DESC, $result[$keysname[0]]);
+        $result = array_count_values(array_map('mb_strtolower', $arr[0]));
+        //sortung anf return top
+        arsort($result);
         $timeExecAnalysis = time() - $timeExecAnalysis;
-        return array(
-            $keysname[0] => array_slice($result[$keysname[0]], 0, $top),
-            $keysname[1] => array_slice($result[$keysname[1]], 0, $top)
-        );
+        return array_slice($result, 0, $top);
     }
-    function ResultArray($e = array()) {
-        //for output time execution query
+    function ResultArray($e = array(), $cols = array()) {
         global $timeExecBuildTable;
         $timeExecBuildTable = time();
         $result = '';
         $border = '';
-        $widthCols = array();
+        $widthCols = array(mb_strlen($cols[0]), mb_strlen($cols[1]));
+        
         //calculate width cols
         foreach($e as $k => $c){
-            $widthCols[$k] = mb_strlen($k);
-            foreach($c as $el){
-                $currentWidthCols = mb_strlen($el);
-                if( $currentWidthCols > $widthCols[$k] )
-                    $widthCols[$k] = $currentWidthCols;
-            }
+            $currentWidthCols0 = mb_strlen($k);
+            if($currentWidthCols0 > $widthCols[0])
+                $widthCols[0] = $currentWidthCols0;
+            $currentWidthCols1 = mb_strlen($c);
+            if($currentWidthCols1 > $widthCols[1])
+                $widthCols[1] = $currentWidthCols1;
         }
+        
         //build horizontal border
-        foreach($e as $k => $c){
+        foreach($widthCols as $w){
             $border .= '+';
-            for($i=0; $i<$widthCols[$k]+2; $i++)
+            for($i = 0; $i < $w+2; $i++)
                 $border .= '-';
         }
         $border .= '+'."\n";
         $result .= $border;
+        
         //build tables header
-        foreach($e as $k => $c){
-            $result .= '| '.$k;
-            for($i=0; $i < $widthCols[$k]-mb_strlen($k)+1; $i++)
+        foreach($cols as $k => $c){
+            $result .= '| '.$c;
+            for($i=0; $i < $widthCols[$k]-mb_strlen($c)+1; $i++)
                 $result .= ' ';
         }
         $result .= '|'."\n".$border;
+        
         //build tables body
-        for( $i = 0; $i < count($e, COUNT_RECURSIVE) / count($e)-1; $i++ ){
-            foreach($e as $k => $el){
-                $result .= '| '.$el[$i];
-                for( $j = 0; $j < $widthCols[$k] - mb_strlen($el[$i])+1; $j++ )
-                    $result .= ' ';
-            }
+        foreach($e as $k => $c){
+            $result .= '| '.$k;
+            for($i=0; $i < $widthCols[0]-mb_strlen($k)+1; $i++)
+                $result .= ' ';
+            $result .= '| '.$c;
+            for($i=0; $i < $widthCols[1]-mb_strlen($c)+1; $i++)
+                $result .= ' ';
             $result .= '|'."\n".$border;
         }
+        
         $timeExecBuildTable = time() - $timeExecBuildTable;
         return $result;
     }

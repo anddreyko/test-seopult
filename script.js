@@ -4,7 +4,6 @@ $(document).ready(function(){
 		e.stopPropagation();
         send();
     });
-	$('#input').keyup(send);
     function send(){
         var textButtonSubmit = 'Start',
             textButtonWait = 'Wait..';
@@ -42,7 +41,7 @@ $(document).ready(function(){
             error: function(e){
                 console.log(e.responseText);
                 console.log(e);
-                $('#result').text(e.responseText);
+                $('#result').html(e.responseText);
             },
             complete: function(){
                 $('#submit').attr('disabled', false)
