@@ -12,26 +12,18 @@
         $timeExecQuery = time();
         $result['top20RuChar'] = ResultArray(Analysis(
             $file,
-            //regular expression for find cyrilic char
             '/[а-я]/ui',
-            //count of seats
             20
-        ),
-        //cols for result
-        array('word', 'count'));
+        ), array('symbol', 'count'));
         $result['timeExecQuery20RuChar'] = time() - $timeExecQuery;
         $result['timeExecAnalysis20RuChar'] = $timeExecAnalysis;
         $result['timeExecBuildTable20RuChar'] = $timeExecBuildTable;
         $timeExecQuery = time();
         $result['top20Word'] = ResultArray(Analysis(
             $file,
-            //regular expression for find words
             '/\b\S{2,}\b/u',
-            //count of seats
             20
-        ),
-        //cols for result
-        array('word', 'count'));
+        ), array('word', 'count'));
         $result['timeExecQuery20Word'] = time() - $timeExecQuery;
         $result['timeExecAnalysis20Word'] = $timeExecAnalysis;
         $result['timeExecBuildTable20Word'] = $timeExecBuildTable;
@@ -55,6 +47,14 @@
         $e = preg_replace('/\W*(?<=[a-zA-Z])\W*\d+/u', '', $e);
         return $e;
     }
+    
+    /*
+     *  $e - input string
+     *  $reqexp - string for regular expression for find
+     *  $top - count of seats, integer
+     *  this return first $top elements in array from results,
+     *  where key is items found, value is number of matches
+     */
     function Analysis($e = '', $regexp = '//', $top = 20) {
         //for output time execution query
         global $timeExecAnalysis;
@@ -69,6 +69,8 @@
         $timeExecAnalysis = time() - $timeExecAnalysis;
         return array_slice($result, 0, $top);
     }
+    
+    //$e - input array, $cols is name for header table result
     function ResultArray($e = array(), $cols = array()) {
         global $timeExecBuildTable;
         $timeExecBuildTable = time();
