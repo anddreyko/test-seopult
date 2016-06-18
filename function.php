@@ -3,10 +3,11 @@
     setlocale(LC_ALL, 'ru_RU.UTF-8');
     ini_set('memory_limit', '-1');
     ini_set('max_execution_time', '120'); //on the off-chance
-    $file = iconv('Windows-1251', 'UTF-8', file_get_contents('http://seopult.ru/uploads/File/war_and_peace.txt'));
     $result = array();
+    $filename = "http://seopult.ru/uploads/File/war_and_peace.txt";
     
-    if( $file ){
+    if( $file = @file_get_contents($filename) ){
+        $file = iconv('Windows-1251', 'UTF-8', $file);
         $timeExecPreparing = '';
         $timeExecAnalysis = '';
         $timeExecBuildTable = '';
