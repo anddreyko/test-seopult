@@ -51,7 +51,7 @@
         $e = preg_replace('/ 1 \(См. сноски в конце части\)|СНОСКИ.*?(?=ЧАСТЬ)/u', '', $e);
         $e = preg_replace('/СНОСКИ.*/u', '', $e);
         //remove mark footnote to phrases in foreign language
-        $e = preg_replace('/\W*(?<=[a-zA-Z])\W*\d+/u', '', $e);
+        $e = preg_replace('/\W*(?<=[a-z])\W*\d+/ui', '', $e);
         $timeExecPreparing = time() - $timeExecPreparing;
         return $e;
     }
